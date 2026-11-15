@@ -58,12 +58,20 @@
                 </h2>
                 <div class="space-y-4 text-sm">
                     <div>
-                        <label class="block text-slate-400 mb-1">Backup Phone (SMS Fallback)</label>
-                        <input type="text" value="+1 (555) 019-2834" readonly class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-300 focus:outline-none">
+                        <label class="block text-slate-400 mb-1">Primary Backup Phone</label>
+                        <input type="text" id="config-phone-1" value="+254742143388" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-300 focus:outline-none focus:border-indigo-500">
                     </div>
                     <div>
-                        <label class="block text-slate-400 mb-1">Cloud Sync Email</label>
-                        <input type="text" value="owner@securevault.internal" readonly class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-300 focus:outline-none">
+                        <label class="block text-slate-400 mb-1">Secondary Backup Phone</label>
+                        <input type="text" id="config-phone-2" value="+254742625487" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-300 focus:outline-none focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-slate-400 mb-1">Primary Cloud Email</label>
+                        <input type="text" id="config-email-1" value="jnjoroge938@gmail.com" readonly class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-300 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-slate-400 mb-1">Secondary Cloud Email</label>
+                        <input type="text" id="config-email-2" value="johnwnjoroge938@gmail.com" readonly class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-300 focus:outline-none">
                     </div>
                     <div class="flex items-center justify-between pt-2">
                         <span class="text-slate-400">Fake Shutdown Blocker</span>
@@ -120,7 +128,7 @@
                 <div id="log-container" class="space-y-3 font-mono text-xs max-h-64 overflow-y-auto pr-2">
                     <div class="p-3 bg-slate-950 border border-slate-800/80 rounded-xl flex items-start justify-between">
                         <div>
-                            <span class="text-emerald-400">[SYSTEM INIT]</span> Room Database initialized with SQLCipher. Local vault secure.
+                            <span class="text-emerald-400">[SYSTEM INIT]</span> Multi-recipient backup pipeline active. Targets configured.
                         </div>
                         <span class="text-slate-600">12:00:01</span>
                     </div>
@@ -143,10 +151,19 @@
         }
 
         function triggerIntruderAlert() {
+            const phone1 = document.getElementById('config-phone-1').value;
+            const phone2 = document.getElementById('config-phone-2').value;
+            const email1 = document.getElementById('config-email-1').value;
+            const email2 = document.getElementById('config-email-2').value;
+            
             document.getElementById('device-status').innerText = "INTRUDER CAPTURED";
             document.getElementById('device-status').className = "text-sm font-semibold text-red-500 animate-pulse";
-            logEvent("ALERT", "Failed unlock detected (3rd attempt). Front camera snap captured & encrypted to local vault.", "text-red-400");
-            logEvent("SMS FALLBACK", "Dispatched emergency coordinates to +1 (555) 019-2834 via SMS gateway.", "text-amber-400");
+            
+            logEvent("ALERT", "Failed unlock detected. Front camera snap captured & encrypted to local vault.", "text-red-400");
+            if (phone1) logEvent("SMS FALLBACK", `Dispatched emergency coordinates to Primary Phone (${phone1}).`, "text-amber-400");
+            if (phone2) logEvent("SMS FALLBACK", `Dispatched emergency coordinates to Secondary Phone (${phone2}).`, "text-amber-400");
+            if (email1) logEvent("CLOUD SYNC", `Encrypted package queued for secure email dispatch to ${email1}.`, "text-sky-400");
+            if (email2) logEvent("CLOUD SYNC", `Encrypted package queued for secure email dispatch to ${email2}.`, "text-sky-400");
         }
 
         function simulateSimChange() {
@@ -154,7 +171,8 @@
         }
 
         function sendRemoteCommand() {
-            logEvent("COMMAND", "Received remote SMS trigger: #LOC. Forcing GPS wake-up and telemetry dump.", "text-indigo-400");
+            const phone1 = document.getElementById('config-phone-1').value;
+            logEvent("COMMAND", `Received remote SMS trigger #LOC from Primary (${phone1}). Forcing GPS wake-up.`, "text-indigo-400");
         }
     </script>
 </body>
