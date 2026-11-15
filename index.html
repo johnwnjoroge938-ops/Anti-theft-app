@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecurGuard Pro - Anti-Theft Dashboard & Simulator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased">
+
+    <!-- Header -->
+    <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-red-600 p-2 rounded-lg text-white shadow-lg shadow-red-600/30">
+                    <i class="fa-solid fa-shield-halved text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold tracking-tight">SecurGuard Pro</h1>
+                    <p class="text-xs text-slate-400">Advanced Anti-Theft Suite Simulator</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    <span class="w-2 h-2 mr-1.5 bg-emerald-500 rounded-full animate-pulse"></span> System Armed
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+        <!-- Left Column: Controls & Triggers -->
+        <div class="space-y-6">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+                <h2 class="text-base font-semibold mb-4 flex items-center">
+                    <i class="fa-solid fa-bolt text-amber-500 mr-2"></i> Security Test Triggers
+                </h2>
+                <div class="space-y-3">
+                    <button onclick="triggerIntruderAlert()" class="w-full bg-red-600 hover:bg-red-500 text-white font-medium py-2.5 px-4 rounded-xl transition duration-200 flex items-center justify-center shadow-lg shadow-red-600/20">
+                        <i class="fa-solid fa-camera mr-2"></i> Simulate Intruder Capture
+                    </button>
+                    <button onclick="simulateSimChange()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium py-2.5 px-4 rounded-xl transition duration-200 flex items-center justify-center border border-slate-700">
+                        <i class="fa-solid fa-sim-card mr-2"></i> Trigger SIM Swap Alert
+                    </button>
+                    <button onclick="sendRemoteCommand()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2.5 px-4 rounded-xl transition duration-200 flex items-center justify-center shadow-lg shadow-indigo-600/20">
+                        <i class="fa-solid fa-terminal mr-2"></i> Send SMS Command (#LOC)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Configuration Settings -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+                <h2 class="text-base font-semibold mb-4 flex items-center">
+                    <i class="fa-solid fa-gear text-slate-400 mr-2"></i> Vault Configuration
+                </h2>
+                <div class="space-y-4 text-sm">
+                    <div>
+                        <label class="block text-slate-400 mb-1">Backup Phone (SMS Fallback)</label>
+                        <input type="text" value="+1 (555) 019-2834" readonly class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-300 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-slate-400 mb-1">Cloud Sync Email</label>
+                        <input type="text" value="owner@securevault.internal" readonly class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-300 focus:outline-none">
+                    </div>
+                    <div class="flex items-center justify-between pt-2">
+                        <span class="text-slate-400">Fake Shutdown Blocker</span>
+                        <input type="checkbox" checked class="accent-red-600 w-4 h-4 cursor-pointer">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Live Feed & Vault Log -->
+        <div class="lg:col-span-2 space-y-6">
+            
+            <!-- Live Status & GPS Map Simulator -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-base font-semibold flex items-center">
+                        <i class="fa-solid fa-location-crosshairs text-emerald-500 mr-2"></i> Live Telemetry & GPS
+                    </h2>
+                    <span id="timestamp" class="text-xs text-slate-500 font-mono">Last synced: Just now</span>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800/60">
+                        <p class="text-xs text-slate-500 mb-1">Device Status</p>
+                        <p id="device-status" class="text-sm font-semibold text-emerald-400">Locked / Secure</p>
+                    </div>
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800/60">
+                        <p class="text-xs text-slate-500 mb-1">Battery Level</p>
+                        <p class="text-sm font-semibold text-slate-200">84% (Charging Blocked)</p>
+                    </div>
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800/60">
+                        <p class="text-xs text-slate-500 mb-1">Network Mode</p>
+                        <p id="network-mode" class="text-sm font-semibold text-sky-400">Online (Wi-Fi)</p>
+                    </div>
+                </div>
+
+                <!-- Simulated Map Box -->
+                <div class="w-full h-48 bg-slate-950 rounded-xl border border-slate-800 relative overflow-hidden flex items-center justify-center">
+                    <div class="absolute inset-0 opacity-20 bg-[radial-gradient(#38bdf8_1px,transparent_1px)] [background-size:16px_16px]"></div>
+                    <div class="text-center z-10">
+                        <div class="inline-block p-3 rounded-full bg-red-500/20 text-red-500 animate-bounce mb-2">
+                            <i class="fa-solid fa-location-dot text-2xl"></i>
+                        </div>
+                        <p id="coords-text" class="text-xs font-mono text-slate-300">Lat: -1.2921, Lon: 36.8219 (Approx. Nairobi CBD)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Encrypted Local Vault Activity Log -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+                <h2 class="text-base font-semibold mb-4 flex items-center">
+                    <i class="fa-solid fa-vault text-amber-500 mr-2"></i> Encrypted Local Vault & Event Log
+                </h2>
+                <div id="log-container" class="space-y-3 font-mono text-xs max-h-64 overflow-y-auto pr-2">
+                    <div class="p-3 bg-slate-950 border border-slate-800/80 rounded-xl flex items-start justify-between">
+                        <div>
+                            <span class="text-emerald-400">[SYSTEM INIT]</span> Room Database initialized with SQLCipher. Local vault secure.
+                        </div>
+                        <span class="text-slate-600">12:00:01</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- JavaScript Simulator Logic -->
+    <script>
+        function logEvent(type, message, colorClass = "text-slate-300") {
+            const container = document.getElementById('log-container');
+            const time = new Date().toLocaleTimeString();
+            const div = document.createElement('div');
+            div.className = "p-3 bg-slate-950 border border-slate-800/80 rounded-xl flex items-start justify-between animate-fadeIn";
+            div.innerHTML = `<div><span class="${colorClass}">[${type}]</span> ${message}</div><span class="text-slate-600">${time}</span>`;
+            container.prepend(div);
+        }
+
+        function triggerIntruderAlert() {
+            document.getElementById('device-status').innerText = "INTRUDER CAPTURED";
+            document.getElementById('device-status').className = "text-sm font-semibold text-red-500 animate-pulse";
+            logEvent("ALERT", "Failed unlock detected (3rd attempt). Front camera snap captured & encrypted to local vault.", "text-red-400");
+            logEvent("SMS FALLBACK", "Dispatched emergency coordinates to +1 (555) 019-2834 via SMS gateway.", "text-amber-400");
+        }
+
+        function simulateSimChange() {
+            logEvent("SIM SWAP", "New SIM ICCID detected! Previous SIM removed. Locking down secure partition.", "text-orange-400");
+        }
+
+        function sendRemoteCommand() {
+            logEvent("COMMAND", "Received remote SMS trigger: #LOC. Forcing GPS wake-up and telemetry dump.", "text-indigo-400");
+        }
+    </script>
+</body>
+</html>
