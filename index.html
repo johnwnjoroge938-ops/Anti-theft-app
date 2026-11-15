@@ -104,16 +104,16 @@
                 <!-- Simulated Map Box -->
                 <div class="w-full h-40 bg-slate-950 rounded-xl border border-slate-800 relative overflow-hidden flex items-center justify-center">
                     <div class="absolute inset-0 opacity-20 bg-[radial-gradient(#38bdf8_1px,transparent_1px)] [background-size:16px_16px]"></div>
-                    <div class="text-center z-10">
+                    <div class="text-center z-10 px-4">
                         <div class="inline-block p-2.5 rounded-full bg-red-500/20 text-red-500 animate-bounce mb-1">
                             <i class="fa-solid fa-location-dot text-xl"></i>
                         </div>
-                        <p id="coords-text" class="text-xs font-mono text-slate-300">Lat: -1.2921, Lon: 36.8219 (Approx. Nairobi CBD)</p>
+                        <p id="coords-text" class="text-xs font-mono text-slate-300">Lat: -1.2921, Lon: 36.8219 (Awaiting GPS Fix...)</p>
                     </div>
                 </div>
             </div>
 
-            <!-- NEW: Intruder Photo Gallery Vault -->
+            <!-- Intruder Photo Gallery Vault -->
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
                 <h2 class="text-base font-semibold mb-4 flex items-center">
                     <i class="fa-solid fa-camera-retro text-red-500 mr-2"></i> Encrypted Intruder Photo Vault
@@ -126,7 +126,7 @@
                 </div>
             </div>
 
-            <!-- NEW: Interactive Command Terminal -->
+            <!-- Interactive Command Terminal -->
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
                 <h2 class="text-base font-semibold mb-4 flex items-center">
                     <i class="fa-solid fa-terminal text-indigo-400 mr-2"></i> Remote SMS Command Line Simulator
@@ -148,7 +148,7 @@
                 <div id="log-container" class="space-y-3 font-mono text-xs max-h-56 overflow-y-auto pr-2">
                     <div class="p-3 bg-slate-950 border border-slate-800/80 rounded-xl flex items-start justify-between">
                         <div>
-                            <span class="text-emerald-400">[SYSTEM INIT]</span> Secure Vault operational. Monitoring active.
+                            <span class="text-emerald-400">[SYSTEM INIT]</span> Secure Vault operational. Live Geolocation module ready.
                         </div>
                         <span class="text-slate-600">12:00:01</span>
                     </div>
@@ -159,7 +159,7 @@
 
     </main>
 
-    <!-- JavaScript Enhancements -->
+    <!-- JavaScript with Real Browser Geolocation -->
     <script>
         function logEvent(type, message, colorClass = "text-slate-300") {
             const container = document.getElementById('log-container');
@@ -178,15 +178,33 @@
             document.getElementById('device-status').className = "text-sm font-semibold text-red-500 animate-pulse";
             
             logEvent("ALERT", "Failed unlock attempt registered. Encrypting snapshot to local vault.", "text-red-400");
-            logEvent("SMS FALLBACK", `Dispatched GPS coordinates to primary backup (${phone1}).`, "text-amber-400");
-            logEvent("CLOUD SYNC", `Encrypted package queued for secure email dispatch to ${email1}.`, "text-sky-400");
 
+            // Fetch Real-Time GPS from Browser
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const lat = position.coords.latitude.toFixed(4);
+                        const lon = position.coords.longitude.toFixed(4);
+                        document.getElementById('coords-text').innerText = `Lat: ${lat}, Lon: ${lon} (Live Device GPS Fix)`;
+                        logEvent("GPS FIX", `High-accuracy hardware coordinates acquired: ${lat}, ${lon}`, "text-emerald-400");
+                        logEvent("SMS FALLBACK", `Dispatched live GPS coordinates to primary backup (${phone1}).`, "text-amber-400");
+                    },
+                    (error) => {
+                        logEvent("GPS ERROR", "Location permission denied or unavailable. Using fallback telemetry.", "text-orange-400");
+                        logEvent("SMS FALLBACK", `Dispatched emergency coordinates to primary backup (${phone1}).`, "text-amber-400");
+                    },
+                    { enableHighAccuracy: true, timeout: 10000 }
+                );
+            } else {
+                logEvent("SMS FALLBACK", `Dispatched emergency coordinates to primary backup (${phone1}).`, "text-amber-400");
+            }
+
+            logEvent("CLOUD SYNC", `Encrypted package queued for secure email dispatch to ${email1}.`, "text-sky-400");
             addMockPhotoToGallery();
         }
 
         function addMockPhotoToGallery() {
             const gallery = document.getElementById('gallery-container');
-            // Remove empty state text if present
             if (gallery.querySelector('div.italic')) {
                 gallery.innerHTML = '';
             }
